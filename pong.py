@@ -25,7 +25,7 @@ paddle_rect = pygame.Rect((PADDLE_START_X, PADDLE_START_Y), (PADDLE_WIDTH, PADDL
 
 # Scoring: 1 point if you hit the ball, -5 point if you miss the ball
 score = 0
-
+opponent_score = 0
 # Load the font for displaying the score
 font = pygame.font.Font(None, 30)
 
@@ -54,7 +54,7 @@ while True:
 		sys.exit(0)
 		pygame.quit()
 		
-	# Update ball position
+i	# Update ball position
 	ball_rect.left += ball_speed[0]
 	ball_rect.top += ball_speed[1]
 
@@ -63,11 +63,13 @@ while True:
 		ball_speed[1] = -ball_speed[1]
 	if ball_rect.right >= SCREEN_WIDTH or ball_rect.left <= 0:
 		ball_speed[0] = -ball_speed[0]
-
+		if ball_rect.left <= 0:
+			opponent_score += 1
+		if ball_rect.right >= SCREEN_WIDTH:
+			score += 1
 	# Test if the ball is hit by the paddle; if yes reverse speed and add a point
 	if paddle_rect.colliderect(ball_rect):
 		ball_speed[0] = -ball_speed[0]
-		score += 1
 	
 	# Clear screen
 	screen.fill((255, 255, 255))
@@ -75,8 +77,10 @@ while True:
 	# Render the ball, the paddle, and the score
 	pygame.draw.rect(screen, (0, 0, 0), paddle_rect) # Your paddle
 	pygame.draw.circle(screen, (0, 0, 0), ball_rect.center, ball_rect.width / 2) # The ball
+	opponent_text =  font.render(str(opponent_score), True, (0, 0, 0))
+   	screen.blit(opponent_text, (3*(SCREEN_WIDTH / 4) - font.size(str(opponent_score))[0] / 2, 5)) 
 	score_text = font.render(str(score), True, (0, 0, 0))
-	screen.blit(score_text, ((SCREEN_WIDTH / 2) - font.size(str(score))[0] / 2, 5)) # The score
+	screen.blit(score_text, ((SCREEN_WIDTH / 4) - font.size(str(score))[0] / 2, 5)) # The score
 	
 	# Update screen and wait 20 milliseconds
 	pygame.display.flip()
