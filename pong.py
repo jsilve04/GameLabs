@@ -31,6 +31,7 @@ opponent_score = 0
 # Load the font for displaying the score
 font = pygame.font.Font(None, 30)
 
+
 # Game loop
 while True:
 	# Event handler
@@ -73,10 +74,16 @@ while True:
 		ball_speed[0] = -ball_speed[0]
 		if ball_rect.left <= 0:
 			opponent_score += 1
+			ball_rect.left = (SCREEN_WIDTH / 2)
+			ball_rect.top = (SCREEN_HEIGHT / 2)
 		if ball_rect.right >= SCREEN_WIDTH:
 			score += 1
+			ball_rect.left = (SCREEN_WIDTH / 2)
+			ball_rect.top = (SCREEN_HEIGHT / 2)
 	# Test if the ball is hit by the paddle; if yes reverse speed and add a point
 	if paddle_rect.colliderect(ball_rect):
+		ball_speed[0] = -ball_speed[0]
+	if paddle2_rect.colliderect(ball_rect):
 		ball_speed[0] = -ball_speed[0]
 	#	try:
 	#		sound = pygame.mixer.Sound(paddle_sound)
