@@ -30,82 +30,103 @@ score = 0
 opponent_score = 0
 # Load the font for displaying the score
 font = pygame.font.Font(None, 30)
+player1 = False
+player2 = False
+screen_id = 0
 
 
 # Game loop
 while True:
-	if score == 11 or opponent_score == 11:
-		score = 0
+	if screen_id == 0:
+		if score == 11 or opponent_score == 11:
+			screen_id = 1
+			score = 0
+			opponent_score = 0
+			if score == 11:
+				player1 = True
+			if opponent_score == 11:
+				player2  = True
 	# Event handler
-	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			sys.exit(0)
-			pygame.quit()
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				sys.exit(0)
+				pygame.quit()
 		# Control the paddle with the mouse
-		elif event.type == pygame.MOUSEMOTION:
-			paddle_rect.centery = event.pos[1]
+			elif event.type == pygame.MOUSEMOTION:
+				paddle_rect.centery = event.pos[1]
 			# correct paddle position if it's going out of window
-			if paddle_rect.top < 0:
-				paddle_rect.top = 0
-			elif paddle_rect.bottom >= SCREEN_HEIGHT:
-				paddle_rect.bottom = SCREEN_HEIGHT
+				if paddle_rect.top < 0:
+					paddle_rect.top = 0
+				elif paddle_rect.bottom >= SCREEN_HEIGHT:
+					paddle_rect.bottom = SCREEN_HEIGHT
 
 	# This test if up or down keys are pressed; if yes, move the paddle
-	if pygame.key.get_pressed()[pygame.K_w] and paddle_rect.top > 0:
-		paddle_rect.top -= BALL_SPEED
-	elif pygame.key.get_pressed()[pygame.K_s] and paddle_rect.bottom < SCREEN_HEIGHT:
-		paddle_rect.top += BALL_SPEED
-	elif pygame.key.get_pressed()[pygame.K_ESCAPE]:
-		sys.exit(0)
-		pygame.quit()
-	if pygame.key.get_pressed()[pygame.K_UP] and paddle2_rect.top > 0:
-		paddle2_rect.top -= BALL_SPEED
-	elif pygame.key.get_pressed()[pygame.K_DOWN] and paddle2_rect.bottom < SCREEN_HEIGHT:
-		paddle2_rect.top += BALL_SPEED
+		if pygame.key.get_pressed()[pygame.K_w] and paddle_rect.top > 0:
+			paddle_rect.top -= BALL_SPEED
+		elif pygame.key.get_pressed()[pygame.K_s] and paddle_rect.bottom < SCREEN_HEIGHT:
+			paddle_rect.top += BALL_SPEED
+		elif pygame.key.get_pressed()[pygame.K_ESCAPE]:
+			sys.exit(0)
+			pygame.quit()
+		if pygame.key.get_pressed()[pygame.K_UP] and paddle2_rect.top > 0:
+			paddle2_rect.top -= BALL_SPEED
+		elif pygame.key.get_pressed()[pygame.K_DOWN] and paddle2_rect.bottom < SCREEN_HEIGHT:
+			paddle2_rect.top += BALL_SPEED
 
 	
 		
 	# Update ball position
-	ball_rect.left += ball_speed[0]
-	ball_rect.top += ball_speed[1]
+		ball_rect.left += ball_speed[0]
+		ball_rect.top += ball_speed[1]
 
 	# Ball collision with rails
-	if ball_rect.top <= 0 or ball_rect.bottom >= SCREEN_HEIGHT:
-		ball_speed[1] = -ball_speed[1]
-	if ball_rect.right >= SCREEN_WIDTH or ball_rect.left <= 0:
-		ball_speed[0] = -ball_speed[0]
-		if ball_rect.left <= 0:
-			opponent_score += 1
-			ball_rect.left = (SCREEN_WIDTH / 2)
-			ball_rect.top = (SCREEN_HEIGHT / 2)
-		if ball_rect.right >= SCREEN_WIDTH:
-			score += 1
-			ball_rect.left = (SCREEN_WIDTH / 2)
-			ball_rect.top = (SCREEN_HEIGHT / 2)
+		if ball_rect.top <= 0 or ball_rect.bottom >= SCREEN_HEIGHT:
+			ball_speed[1] = -ball_speed[1]
+		if ball_rect.right >= SCREEN_WIDTH or ball_rect.left <= 0:
+			ball_speed[0] = -ball_speed[0]
+			if ball_rect.left <= 0:
+				opponent_score += 1
+				ball_rect.left = (SCREEN_WIDTH / 2)
+				ball_rect.top = (SCREEN_HEIGHT / 2)
+			if ball_rect.right >= SCREEN_WIDTH:
+				score += 1
+				ball_rect.left = (SCREEN_WIDTH / 2)
+				ball_rect.top = (SCREEN_HEIGHT / 2)
 	# Test if the ball is hit by the paddle; if yes reverse speed and add a point
-	if paddle_rect.colliderect(ball_rect):
-		ball_speed[0] = -ball_speed[0]
-	if paddle2_rect.colliderect(ball_rect):
-		ball_speed[0] = -ball_speed[0]
-	#	try:
-	#		sound = pygame.mixer.Sound(paddle_sound)
-	#	except pygame.error, message:
-	#		print "Cannot load sound: " + paddle_sound
-	#		raise SystemExit, message
-	# Clear screen
-	screen.fill((255, 255, 255))
-
+		if paddle_rect.colliderect(ball_rect):
+			ball_speed[0] = -ball_speed[0]
+		if paddle2_rect.colliderect(ball_rect):
+			ball_speed[0] = -ball_speed[0]
+	#		try:
+	#			sound = pygame.mixer.Sound(paddle_sound)
+	#		except pygame.error, message:
+	#			print "Cannot load sound: " + paddle_sound
+	#			raise SystemExit, message
+	
 	# Render the ball, the paddle, and the score
-	pygame.draw.rect(screen, (0, 0, 0), paddle_rect) # Your paddle
-	pygame.draw.rect(screen, (0, 0, 0), paddle2_rect) 
-	pygame.draw.circle(screen, (0, 0, 0), ball_rect.center, ball_rect.width / 2) # The ball
-	opponent_text =  font.render(str(opponent_score), True, (0, 0, 0))
-   	screen.blit(opponent_text, (3*(SCREEN_WIDTH / 4) - font.size(str(opponent_score))[0] / 2, 5)) 
-	score_text = font.render(str(score), True, (0, 0, 0))
-	screen.blit(score_text, ((SCREEN_WIDTH / 4) - font.size(str(score))[0] / 2, 5)) # The score
-	pygame.draw.line(screen, (0,0,0), (SCREEN_WIDTH / 2, 0), (SCREEN_WIDTH/2, SCREEN_HEIGHT), 8)	
-	pygame.draw.aaline(screen, (255,0,0), (SCREEN_WIDTH / 2 - 10, 0), (SCREEN_WIDTH/2 - 10, SCREEN_HEIGHT), 4)
-	pygame.draw.aaline(screen, (255,0,0), (SCREEN_WIDTH / 2 + 10, 0), (SCREEN_WIDTH/2 + 10, SCREEN_HEIGHT), 4)
+		pygame.draw.rect(screen, (0, 0, 0), paddle_rect) # Your paddle
+		pygame.draw.rect(screen, (0, 0, 0), paddle2_rect) 
+		pygame.draw.circle(screen, (0, 0, 0), ball_rect.center, ball_rect.width / 2) # The ball
+		opponent_text =  font.render(str(opponent_score), True, (0, 0, 0))
+   		screen.blit(opponent_text, (3*(SCREEN_WIDTH / 4) - font.size(str(opponent_score))[0] / 2, 5)) 
+		score_text = font.render(str(score), True, (0, 0, 0))
+		screen.blit(score_text, ((SCREEN_WIDTH / 4) - font.size(str(score))[0] / 2, 5)) # The score
+		pygame.draw.line(screen, (0,0,0), (SCREEN_WIDTH / 2, 0), (SCREEN_WIDTH/2, SCREEN_HEIGHT), 8)	
+		pygame.draw.aaline(screen, (255,0,0), (SCREEN_WIDTH / 2 - 10, 0), (SCREEN_WIDTH/2 - 10, SCREEN_HEIGHT), 4)
+		pygame.draw.aaline(screen, (255,0,0), (SCREEN_WIDTH / 2 + 10, 0), (SCREEN_WIDTH/2 + 10, SCREEN_HEIGHT), 4)
 	# Update screen and wait 20 milliseconds
 	pygame.display.flip()
 	pygame.time.delay(20)
+	screen.fill((255, 255, 255))
+
+	if screen_id == 1:
+		if player1:
+			text = "Player 1 wins! Play again?"
+		else:
+			text = "Player 1 wins! Play again?"
+		score_text = font.render(text, True, (0, 0, 0))
+		screen.blit(score_text, (SCREEN_WIDTH/2 - 110, SCREEN_HEIGHT/2))
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				sys.exit(0)
+				pygame.quit()
