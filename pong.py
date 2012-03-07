@@ -34,6 +34,8 @@ font = pygame.font.Font(None, 30)
 
 # Game loop
 while True:
+	if score == 11 or opponent_score == 11:
+		score = 0
 	# Event handler
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
