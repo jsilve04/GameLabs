@@ -19,7 +19,7 @@ ball_rect = pygame.Rect((SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), (BALL_WIDTH_HEIGH
 
 # Speed of the ball (x, y)
 ball_speed = [BALL_SPEED, BALL_SPEED]
-
+paddle_sound = 'Memo.wav'
 
 # Your paddle vertically centered on the left side
 paddle_rect = pygame.Rect((PADDLE_START_X, PADDLE_START_Y), (PADDLE_WIDTH, PADDLE_HEIGHT))
@@ -95,13 +95,12 @@ while True:
 	# Test if the ball is hit by the paddle; if yes reverse speed and add a point
 		if paddle_rect.colliderect(ball_rect):
 			ball_speed[0] = -ball_speed[0]
+			pygame.mixer.music.load('pluck.wav')
+                       	pygame.mixer.music.play()
 		if paddle2_rect.colliderect(ball_rect):
 			ball_speed[0] = -ball_speed[0]
-	#		try:
-	#			sound = pygame.mixer.Sound(paddle_sound)
-	#		except pygame.error, message:
-	#			print "Cannot load sound: " + paddle_sound
-	#			raise SystemExit, message
+			pygame.mixer.music.load('pluck.wav')
+			pygame.mixer.music.play()
 	
 	# Render the ball, the paddle, and the score
 		pygame.draw.rect(screen, (0, 0, 0), paddle_rect) # Your paddle
@@ -121,12 +120,17 @@ while True:
 
 	if screen_id == 1:
 		if player1:
-			text = "Player 1 wins! Play again?"
+			text = "Player 1 wins! Play again? Press (y/n)"
 		else:
-			text = "Player 1 wins! Play again?"
+			text = "Player 2 wins! Play again? Press (y/n)"
 		score_text = font.render(text, True, (0, 0, 0))
-		screen.blit(score_text, (SCREEN_WIDTH/2 - 110, SCREEN_HEIGHT/2))
+		screen.blit(score_text, (SCREEN_WIDTH/2 - 175, SCREEN_HEIGHT/2 - 30))
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				sys.exit(0)
 				pygame.quit()
+		if pygame.key.get_pressed()[pygame.K_y]:
+			screen_id = 0
+		elif pygame.key.get_pressed()[pygame.K_n]:
+			sys.exit(0)
+			pygame.quit()
